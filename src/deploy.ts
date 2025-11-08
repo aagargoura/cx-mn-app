@@ -205,3 +205,5 @@ console.log("Saved to deployment.json");
 
 // Close wallet connection
 await wallet.close();
+
+main().catch(console.error);
