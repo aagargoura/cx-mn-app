@@ -86,3 +86,31 @@ const waitForFunds = (wallet: Wallet) =>
     rl.close();
   }
 }
+
+// Build wallet from seed
+console.log("Building wallet...");
+const wallet = await WalletBuilder.buildFromSeed(
+  TESTNET_CONFIG.indexer,
+  TESTNET_CONFIG.indexerWS,
+  TESTNET_CONFIG.proofServer,
+  TESTNET_CONFIG.node,
+  walletSeed,
+  getZswapNetworkId(),
+  "info"
+);
+
+wallet.start();
+const state = await Rx.firstValueFrom(wallet.state());
+
+console.log(`Your wallet address is: ${state.address}`);
+
+let balance = state.balances[nativeToken()] || 0n;
+
+if (balance === 0n) {
+  console.log(`Your wallet balance is: 0`);
+  console.log("Visit: https://midnight.network/test-faucet to get some funds.");
+  console.log(`Waiting to receive tokens...`);
+  balance = await waitForFunds(wallet);
+}
+
+console.log(`Balance: ${balance}`);
