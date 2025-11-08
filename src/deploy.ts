@@ -20,3 +20,34 @@ import * as readline from "readline/promises";
 import * as Rx from "rxjs";
 import { type Wallet } from "@midnight-ntwrk/wallet-api";
 
+// Fix WebSocket for Node.js environment
+// @ts-ignore
+globalThis.WebSocket = WebSocket;
+
+// Configure for Midnight Testnet
+setNetworkId(NetworkId.TestNet);
+
+// Testnet connection endpoints
+const TESTNET_CONFIG = {
+  indexer: "https://indexer.testnet-02.midnight.network/api/v1/graphql",
+  indexerWS: "wss://indexer.testnet-02.midnight.network/api/v1/graphql/ws",
+  node: "https://rpc.testnet-02.midnight.network",
+  proofServer: "http://127.0.0.1:6300"
+};
+
+const waitForFunds = (wallet: Wallet) =>
+  Rx.firstValueFrom(
+    wallet.state().pipe(
+      Rx.tap((state) => {
+        if (state.syncProgress) {
+          console.log(
+            `Sync progress: synced=${state.syncProgress.synced}, sourceGap=${state.syncProgress.lag.sourceGap}, applyGap=${state.syncProgress.lag.applyGap}`
+          );
+        }
+      }),
+      Rx.filter((state) => state.syncProgress?.synced === true),
+      Rx.map((s) => s.balances[nativeToken()] ?? 0n),
+      Rx.filter((balance) => balance > 0n),
+      Rx.tap((balance) => console.log(`Wallet funded with balance: ${balance}`))
+    )
+  );
