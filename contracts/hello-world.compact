@@ -1,0 +1,28 @@
+/*
+This directive declares the compiler version with which the contract is compatible, 
+ensuring predictable behavior and preventing issues with future compiler updates
+*/
+pragma language_version >= 0.16 && <= 0.18;
+
+/*
+The Compact Standard Library is required to access built-in types and functions 
+that are essential for contract development.
+*/
+import CompactStandardLibrary;
+
+/*
+The ledger section defines the on-chain state variables for a contract. 
+This section functions as a schema for data stored permanently on the blockchain. 
+Variables can be marked with export to make them accessible from a dApp.
+*/
+export ledger message: Opaque<"string">;
+
+/*
+This circuit accepts a custom message as input and stores the message in the message state variable.
+Why disclose() is required
+Compact enforces privacy by default. All user input is considered private unless explicitly made public. 
+The disclose() function indicates that the message is intentionally visible on the public ledger.
+*/
+export circuit storeMessage(customMessage: Opaque<"string">): [] {
+    message = disclose(customMessage);
+}
