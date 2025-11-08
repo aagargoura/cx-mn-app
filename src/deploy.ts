@@ -179,3 +179,29 @@ const providers = {
   walletProvider: walletProvider,
   midnightProvider: walletProvider
 };
+
+// Deploy contract to blockchain
+console.log("Deploying contract (30-60 seconds)...");
+
+const deployed = await deployContract(providers, {
+  contract: contractInstance,
+  privateStateId: "helloWorldState",
+  initialPrivateState: {}
+});
+
+const contractAddress = deployed.deployTxData.public.contractAddress;
+
+// Save deployment information
+console.log("\nDEPLOYED!");
+console.log(`Contract: ${contractAddress}\n`);
+
+const info = {
+  contractAddress,
+  deployedAt: new Date().toISOString()
+};
+
+fs.writeFileSync("deployment.json", JSON.stringify(info, null, 2));
+console.log("Saved to deployment.json");
+
+// Close wallet connection
+await wallet.close();
