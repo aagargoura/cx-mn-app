@@ -114,3 +114,22 @@ if (balance === 0n) {
 }
 
 console.log(`Balance: ${balance}`);
+
+// Load compiled contract files
+console.log("Loading contract...");
+const contractPath = path.join(process.cwd(), "contracts");
+const contractModulePath = path.join(
+  contractPath,
+  "managed",
+  "hello-world",
+  "contract",
+  "index.cjs"
+);
+
+if (!fs.existsSync(contractModulePath)) {
+  console.error("Contract not found! Run: npm run compile");
+  process.exit(1);
+}
+
+const HelloWorldModule = await import(contractModulePath);
+const contractInstance = new HelloWorldModule.Contract({});
