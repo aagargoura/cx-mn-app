@@ -162,3 +162,20 @@ const walletProvider = {
     return wallet.submitTransaction(tx);
   }
 };
+
+// Configure all required providers
+console.log("Setting up providers...");
+const zkConfigPath = path.join(contractPath, "managed", "hello-world");
+const providers = {
+  privateStateProvider: levelPrivateStateProvider({
+    privateStateStoreName: "hello-world-state"
+  }),
+  publicDataProvider: indexerPublicDataProvider(
+    TESTNET_CONFIG.indexer,
+    TESTNET_CONFIG.indexerWS
+  ),
+  zkConfigProvider: new NodeZkConfigProvider(zkConfigPath),
+  proofProvider: httpClientProofProvider(TESTNET_CONFIG.proofServer),
+  walletProvider: walletProvider,
+  midnightProvider: walletProvider
+};
