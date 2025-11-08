@@ -51,3 +51,38 @@ const waitForFunds = (wallet: Wallet) =>
       Rx.tap((balance) => console.log(`Wallet funded with balance: ${balance}`))
     )
   );
+
+  async function main() {
+  console.log("Midnight Hello World Deployment\n");
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  try {
+    // Ask user if they have an existing wallet seed
+    const choice = await rl.question("Do you have a wallet seed? (y/n): ");
+
+    let walletSeed: string;
+    if (choice.toLowerCase() === "y" || choice.toLowerCase() === "yes") {
+      // Use existing seed
+      walletSeed = await rl.question("Enter your 64-character seed: ");
+    } else {
+      // Generate new wallet seed
+      const bytes = new Uint8Array(32);
+      // @ts-ignore
+      crypto.getRandomValues(bytes);
+      walletSeed = Array.from(bytes, (b) =>
+        b.toString(16).padStart(2, "0")
+      ).join("");
+      console.log(`\nSAVE THIS SEED: ${walletSeed}\n`);
+    }
+
+    // Rest of deployment logic follows...
+  } catch (error) {
+    console.error("Failed:", error);
+  } finally {
+    rl.close();
+  }
+}
