@@ -133,3 +133,32 @@ if (!fs.existsSync(contractModulePath)) {
 
 const HelloWorldModule = await import(contractModulePath);
 const contractInstance = new HelloWorldModule.Contract({});
+
+// Create wallet provider for transactions
+const walletState = await Rx.firstValueFrom(wallet.state());
+
+const walletProvider = {
+  coinPublicKey: walletState.coinPublicKey,
+  encryptionPublicKey: walletState.encryptionPublicKey,
+  balanceTx(tx: any, newCoins: any) {
+    return wallet
+      .balanceTransaction(
+        ZswapTransaction.deserialize(
+          tx.serialize(getLedgerNetworkId()),
+          getZswapNetworkId()
+        ),
+        newCoins
+      )
+      .then((tx) => wallet.proveTransaction(tx))
+      .then((zswapTx) =>
+        Transaction.deserialize(
+          zswapTx.serialize(getZswapNetworkId()),
+          getLedgerNetworkId()
+        )
+      )
+      .then(createBalancedTx);
+  },
+  submitTx(tx: any) {
+    return wallet.submitTransaction(tx);
+  }
+};
