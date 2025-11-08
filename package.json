@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "compile": "compact compile contracts/hello-world.compact contracts/managed/hello-world",
+    "compile": "cd contracts && compact compile hello-world.compact .",
     "build": "tsc",
-    "deploy": "node dist/deploy.js"
+    "deploy": "node dist/deploy.js",
+    "cli": "node dist/cli.js"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "0.9.0",
