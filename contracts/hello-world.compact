@@ -24,5 +24,5 @@ Compact enforces privacy by default. All user input is considered private unless
 The disclose() function indicates that the message is intentionally visible on the public ledger.
 */
 export circuit storeMessage(customMessage: Opaque<"string">): [] {
-    message = disclose(customMessage);
+  message = disclose(customMessage);
 }

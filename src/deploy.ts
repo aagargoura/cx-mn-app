@@ -79,15 +79,7 @@ const waitForFunds = (wallet: Wallet) =>
       console.log(`\nSAVE THIS SEED: ${walletSeed}\n`);
     }
 
-    // Rest of deployment logic follows...
-  } catch (error) {
-    console.error("Failed:", error);
-  } finally {
-    rl.close();
-  }
-}
-
-// Build wallet from seed
+    // Build wallet from seed
 console.log("Building wallet...");
 const wallet = await WalletBuilder.buildFromSeed(
   TESTNET_CONFIG.indexer,
@@ -205,5 +197,13 @@ console.log("Saved to deployment.json");
 
 // Close wallet connection
 await wallet.close();
+
+
+  } catch (error) {
+    console.error("Failed:", error);
+  } finally {
+    rl.close();
+  }
+}
 
 main().catch(console.error);
